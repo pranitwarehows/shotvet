@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: bolt_mysql
+    database: disco-sector-423110-r6
+    schema: aivent_bolt
+    tables:
+      - name: clients
+      - name: patients
+      - name: info_tier_table
+      - name: invoice_items
+      - name: reminder
+      - name: sex
+      - name: species
+      - name: breeds

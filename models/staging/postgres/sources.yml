@@ -1,0 +1,48 @@
+version: 2
+
+sources:
+  - name: postgres
+    database: disco-sector-423110-r6
+    schema: postgres
+    tables:
+      - name: accounts
+      - name: big_commerce_checkouts
+      - name: big_commerce_line_items
+      - name: client_registrations
+      - name: clients
+      - name: county_rabies_tag_requirements
+      - name: doctor_regions
+      - name: doctor_signatures
+      - name: doctors
+      - name: exam_results
+      - name: geography_columns
+      - name: geometry_columns
+      - name: licenses
+      - name: location_marketing_material_requirements
+      - name: locations
+      - name: ownerships
+      - name: patient_breeds
+      - name: patient_registrations
+      - name: patients
+      - name: postal_addresses
+      - name: product_fulfillments
+      - name: questionnaires
+      - name: recommendations
+      - name: route_locations
+      - name: route_regions
+      - name: routes
+      - name: scheduled_doctors
+      - name: scheduled_locations
+      - name: scheduled_marketing_materials
+      - name: scheduled_routes
+      - name: scheduled_user_assignments
+      - name: sessions
+      - name: spatial_ref_sys
+      - name: store_credit_modifications
+      - name: teams
+      - name: test_results
+      - name: user_roles
+      - name: users
+      - name: vaccinations
+      - name: work_order_line_items
+      - name: work_orders
