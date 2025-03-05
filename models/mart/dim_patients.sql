@@ -7,7 +7,16 @@
 with
     mysql_patients as (select * from {{ ref('stg_mysql_patients') }}),
 
-    postgres_patients as (select * from {{ source("postgres", "patients") }}),
+    postgres_clients_patients_rel as (select distinct patient_id from {{ ref('clients_patients_rel') }}),
+
+    postgres_patients as 
+    (
+        select 
+        p.*, CASE WHEN cp.patient_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_patient
+        from {{ source("postgres", "patients") }} as p 
+        left join postgres_clients_patients_rel cp 
+        on p.id = cp.patient_id
+    ),
 
     ownership as (select * from {{ source("postgres", "ownerships") }}),
 
@@ -37,7 +46,8 @@ with
         pp.date_of_death,
         b.name as breed_name,
         sb.name as secondary_breed_name,
-        'postgres' as source
+        'postgres' as source,
+        pp.is_patient
 
     from 
         {{ ref('dim_clients') }} dc 
@@ -67,7 +77,8 @@ union all
         mp.death_date,
         bs.breed_name as breed_name,
         sbs.breed_name as secondary_breed_name,
-        'mysql' as source
+        'mysql' as source,
+        mp.is_patient
     from 
         {{ ref('dim_clients') }} dc 
     left join mysql_patients mp on dc.email=mp.email
