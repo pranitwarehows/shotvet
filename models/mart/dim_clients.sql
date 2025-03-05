@@ -6,8 +6,17 @@
 
 with
     mysql_clients as (select * from {{ ref('stg_mysql_client') }}),
+    
+    postgres_clients_patients_rel as (select distinct client_id from {{ ref('clients_patients_rel') }}),
 
-    postgres_clients as (select * from {{ source("postgres", "clients") }}),
+    postgres_clients as 
+    (
+        select 
+        c.*, CASE WHEN cp.client_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_client
+        from {{ source("postgres", "clients") }} as c 
+        left join postgres_clients_patients_rel cp 
+        on c.id = cp.client_id
+    ),
 
     postal_addresses as (
         select
@@ -38,7 +47,8 @@ with
         pa.region,
         pa.postal_code,
         pa.country_code,
-        'postgres' as source
+        'postgres' as source,
+        CASE WHEN mc.is_client = TRUE OR pc.is_client = TRUE THEN TRUE ELSE FALSE END AS is_client
 
     from 
         postgres_clients pc 
@@ -64,7 +74,9 @@ union all
         state as region,
         zip as postal_code,
         'US' as country_code,
-        'mysql' as source
+        'mysql' as source,
+        mc.is_client as is_client
+
     from
         mysql_clients mc 
     where mc.email not in (select distinct email from postgres_clients)
@@ -88,7 +100,9 @@ select
     pa.region,
     pa.postal_code,
     pa.country_code,
-    'postgres' as source
+    'postgres' as source,
+    pc.is_client as is_client
+
 from
     postgres_clients pc
 left join postal_addresses pa on pc.postal_address_id = pa.id
